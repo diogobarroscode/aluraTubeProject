@@ -3,13 +3,13 @@ import config from "../config.json"
 import styled from "styled-components";
 import Menu from "../src/components/Menu";
 import { StyledTimeline } from "../src/components/TimeLine";
-import { createClient } from "@supabase/supabase-js";
+import { videoService } from "../src/services/videoService";
 
-const PROJECT_URL = "https://gbdmaqjxzyehjkmbmrqn.supabase.co";
-const PUBLIC_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdiZG1hcWp4enllaGprbWJtcnFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NzM0ODczNTMsImV4cCI6MTk4OTA2MzM1M30.T1fMr1LcYjVioKAWp9H8GnwbmhG2fgtdJWEdlN9Gcjk";
-const supabase = createClient(PROJECT_URL, PUBLIC_KEY);
+
 
 function HomePage() {
+
+    const service = videoService();
 
     const estilosDaHomePage = {
         //backgroundColor: "red"
@@ -24,20 +24,20 @@ function HomePage() {
 
     React.useEffect(() => {
         console.log("useEffect");
-        supabase.from("video")
-                .select("*")
-                .then((dados) => {
-                    console.log(dados.data);
+        service
+            .getAllVideos()
+            .then((dados) => {
+                console.log(dados.data);
 
-                    const novasPlaylists = {...playlists};
-                    dados.data.forEach((video) => {
-                        if(!novasPlaylists[video.playlist]){
-                            novasPlaylists[video.playlist] = [];
-                        }
-                        novasPlaylists[video.playlist].push(video);
-                    })
-                    setPlaylists(novasPlaylists);
-                });
+                const novasPlaylists = {...playlists};
+                dados.data.forEach((video) => {
+                    if(!novasPlaylists[video.playlist]){
+                        novasPlaylists[video.playlist] = [];
+                    }
+                    novasPlaylists[video.playlist].push(video);
+                })
+                setPlaylists(novasPlaylists);
+            });
     }, []);
 
 
